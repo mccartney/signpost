@@ -11,6 +11,7 @@ enum Direction {
 }
 
 case class Cell(
-                 visitingNumber: Option[Int],
-                 arrow: Direction,
+               visitingNumber: Option[Int],
+               arrow: Direction,
+               follower: Option[Cell] = None
                )

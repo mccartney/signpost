@@ -4,16 +4,13 @@ import java.nio.file.{Files, Paths}
 
 object App {
   def main(args: Array[String]): Unit = {
-    println(greeting())
-    println(exampleBoard)
-
+    val board = exampleBoard
+    val solvedBoard = new Solver().solve(exampleBoard)
     val renderer = Renderer()
-    val html = renderer.boardToHtml(exampleBoard)
+    val html = renderer.boardToHtml(solvedBoard)
     Files.writeString(Paths.get("board.html"), html)
     println("Board rendered to board.html")
   }
-
-  def greeting(): String = "Hello, world!"
 
   val exampleBoard: Board = Board(
     size = 5,
