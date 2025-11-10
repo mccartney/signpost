@@ -4,3 +4,6 @@ hs_err_pid*
 .gradle
 build
 .idea/
+out/
+.claude/
+.claude_local.json
