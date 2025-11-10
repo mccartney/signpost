@@ -1,7 +1,7 @@
 package pl.waw.oledzki.signpost
 
 case class Board(
-                  size: int,
+                  size: Int,
                   cells: List[List[Cell]]
                 )
 
@@ -11,6 +11,6 @@ enum Direction {
 }
 
 case class Cell(
-                 visitingNumber: Option[int],
+                 visitingNumber: Option[Int],
                  arrow: Direction,
                )
