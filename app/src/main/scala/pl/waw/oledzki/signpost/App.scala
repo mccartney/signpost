@@ -14,42 +14,36 @@ object App {
 
   val exampleBoard: Board = Board(
     size = 5,
-    cells = List(
-      List(
-        Cell(Some(1), Direction.START),
-        Cell(None, Direction.E),
-        Cell(None, Direction.S),
-        Cell(None, Direction.SW),
-        Cell(None, Direction.S)
-      ),
-      List(
-        Cell(None, Direction.N),
-        Cell(None, Direction.E),
-        Cell(None, Direction.SE),
-        Cell(None, Direction.W),
-        Cell(None, Direction.SW)
-      ),
-      List(
-        Cell(None, Direction.NE),
-        Cell(None, Direction.S),
-        Cell(None, Direction.E),
-        Cell(None, Direction.W),
-        Cell(None, Direction.N)
-      ),
-      List(
-        Cell(None, Direction.E),
-        Cell(None, Direction.NE),
-        Cell(None, Direction.N),
-        Cell(None, Direction.W),
-        Cell(None, Direction.NW)
-      ),
-      List(
-        Cell(None, Direction.E),
-        Cell(None, Direction.N),
-        Cell(None, Direction.NE),
-        Cell(None, Direction.N),
-        Cell(Some(25), Direction.STOP)
-      )
+    cells = Map(
+      (0, 0) -> Cell(Some(1), Direction.START),
+      (1, 0) -> Cell(None, Direction.E),
+      (2, 0) -> Cell(None, Direction.S),
+      (3, 0) -> Cell(None, Direction.SW),
+      (4, 0) -> Cell(None, Direction.S),
+
+      (0, 1) -> Cell(None, Direction.N),
+      (1, 1) -> Cell(None, Direction.E),
+      (2, 1) -> Cell(None, Direction.SE),
+      (3, 1) -> Cell(None, Direction.W),
+      (4, 1) -> Cell(None, Direction.SW),
+
+      (0, 2) -> Cell(None, Direction.NE),
+      (1, 2) -> Cell(None, Direction.S),
+      (2, 2) -> Cell(None, Direction.E),
+      (3, 2) -> Cell(None, Direction.W),
+      (4, 2) -> Cell(None, Direction.N),
+
+      (0, 3) -> Cell(None, Direction.E),
+      (1, 3) -> Cell(None, Direction.NE),
+      (2, 3) -> Cell(None, Direction.N),
+      (3, 3) -> Cell(None, Direction.W),
+      (4, 3) -> Cell(None, Direction.NW),
+
+      (0, 4) -> Cell(None, Direction.E),
+      (1, 4) -> Cell(None, Direction.N),
+      (2, 4) -> Cell(None, Direction.NE),
+      (3, 4) -> Cell(None, Direction.N),
+      (4, 4) -> Cell(Some(25), Direction.STOP)
     )
   )
 }

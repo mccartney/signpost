@@ -6,8 +6,7 @@ class Renderer(cellSize: Int = 80) {
     val svgSize = board.size * cellSize
 
     val cells = for {
-      (row, y) <- board.cells.zipWithIndex
-      (cell, x) <- row.zipWithIndex
+      ((x, y), cell) <- board.cells
     } yield renderCell(cell, x, y)
 
     s"""<!DOCTYPE html>

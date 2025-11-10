@@ -2,7 +2,7 @@ package pl.waw.oledzki.signpost
 
 case class Board(
                   size: Int,
-                  cells: List[List[Cell]]
+                  cells: Map[(Int, Int), Cell]
                 )
 
 enum Direction {
