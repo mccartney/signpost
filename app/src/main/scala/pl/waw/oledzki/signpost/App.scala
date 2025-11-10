@@ -1,9 +1,16 @@
 package pl.waw.oledzki.signpost
 
+import java.nio.file.{Files, Paths}
+
 object App {
   def main(args: Array[String]): Unit = {
     println(greeting())
     println(exampleBoard)
+
+    val renderer = Renderer()
+    val html = renderer.boardToHtml(exampleBoard)
+    Files.writeString(Paths.get("board.html"), html)
+    println("Board rendered to board.html")
   }
 
   def greeting(): String = "Hello, world!"
