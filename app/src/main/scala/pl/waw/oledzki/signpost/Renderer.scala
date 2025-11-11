@@ -39,40 +39,47 @@ class Renderer(cellSize: Int = 80) {
       case None => ""
     }
 
+    // Position arrow in bottom-right corner
+    val arrowAreaSize = (cellSize * 0.4).toInt
+    val margin = (cellSize * 0.05).toInt
+    val arrowCx = x * cellSize + cellSize - arrowAreaSize / 2 - margin
+    val arrowCy = y * cellSize + cellSize - arrowAreaSize / 2 - margin
+
     val arrow = cell.arrow match {
       case Direction.START => s"""<circle cx="$cx" cy="$cy" r="8" fill="green"/>"""
       case Direction.STOP => s"""<circle cx="$cx" cy="$cy" r="8" fill="red"/>"""
-      case _ => renderArrow(cx, cy, cell.arrow)
+      case _ => renderArrow(arrowCx, arrowCy, cell.arrow, arrowAreaSize)
     }
 
     rect + "\n    " + number + "\n    " + arrow
   }
 
-  private def renderArrow(cx: Int, cy: Int, dir: Direction): String = {
-    val arrowLength = 25
-    val (dx, dy) = dir match {
-      case Direction.N => (0, -1)
-      case Direction.S => (0, 1)
-      case Direction.E => (1, 0)
-      case Direction.W => (-1, 0)
-      case Direction.NE => (1, -1)
-      case Direction.NW => (-1, -1)
-      case Direction.SE => (1, 1)
-      case Direction.SW => (-1, 1)
-      case _ => (0, 0)
+  private def renderArrow(cx: Int, cy: Int, dir: Direction, arrowAreaSize: Int): String = {
+    val arrowLength = (arrowAreaSize * 0.5).toInt
+
+    // Calculate rotation angle based on direction
+    val angle = dir match {
+      case Direction.E => 0
+      case Direction.SE => 45
+      case Direction.S => 90
+      case Direction.SW => 135
+      case Direction.W => 180
+      case Direction.NW => 225
+      case Direction.N => 270
+      case Direction.NE => 315
+      case _ => 0
     }
 
-    val normalize = math.sqrt(dx * dx + dy * dy)
-    val ndx = dx / normalize
-    val ndy = dy / normalize
+    // Arrow always points to the right (0 degrees), then rotated
+    val x1 = cx - arrowLength / 2
+    val x2 = cx + arrowLength / 2
 
-    val x2 = cx + (ndx * arrowLength).toInt
-    val y2 = cy + (ndy * arrowLength).toInt
-
-    s"""<line x1="$cx" y1="$cy" x2="$x2" y2="$y2" stroke="black" stroke-width="2" marker-end="url(#arrowhead)"/>
+    s"""<g transform="rotate($angle $cx $cy)">
+       |      <line x1="$x1" y1="$cy" x2="$x2" y2="$cy" stroke="black" stroke-width="3" marker-end="url(#arrowhead)"/>
+       |    </g>
        |    <defs>
-       |      <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="3" orient="auto">
-       |        <polygon points="0 0, 10 3, 0 6" fill="black"/>
+       |      <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+       |        <polygon points="0 0, 6 3, 0 6" fill="black"/>
        |      </marker>
        |    </defs>""".stripMargin
   }
