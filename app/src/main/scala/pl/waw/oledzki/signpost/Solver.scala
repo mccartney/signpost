@@ -1,5 +1,7 @@
 package pl.waw.oledzki.signpost
 
+import scala.:+
+
 class Solver {
   def solve(board: Board): Board = {
     val oneStep = applyRules(board)
@@ -12,7 +14,8 @@ class Solver {
 
   def applyRules(board: Board): Board = {
     val rules = List[Rule](
-      new ConnectedCellsHaveConsecutiveNumber()
+      new ConnectedCellsHaveConsecutiveNumber(),
+      new OnlyOneCellToGoTo(),
     )
     Function.chain(rules.map(r => r.evaluate))(board)
   }
@@ -24,7 +27,7 @@ abstract class Rule {
 
 class ConnectedCellsHaveConsecutiveNumber extends Rule {
   override def evaluate(board: Board): Board = {
-    board.connections.collectFirst { case ((x1, y1), (x2, y2)) =>
+    board.connections.collect { case ((x1, y1), (x2, y2)) =>
         val cell1 = board.cells((x1, y1))
         val cell2 = board.cells((x2, y2))
         (cell1.visitingNumber, cell2.visitingNumber) match {
@@ -35,6 +38,21 @@ class ConnectedCellsHaveConsecutiveNumber extends Rule {
           case _ =>
             None
         }
-      }.flatten.getOrElse(board)
+      }.flatten.headOption.getOrElse(board)
+  }
+}
+
+class OnlyOneCellToGoTo extends Rule {
+  override def evaluate(board: Board): Board = {
+    board.cells.collect { case ((x: Int, y: Int), cell: Cell) =>
+      val potentialTargets = BoardUtils.findAcceptingCellsIndicatedByArrow(board, x, y)
+      if (potentialTargets.size == 1) {
+        val target = potentialTargets.head
+        val connection = ((x, y), target._1)
+        Some(board.copy(connections = board.connections + connection))
+      } else {
+        None
+      }
+    }.flatten.headOption.getOrElse(board)
   }
 }
