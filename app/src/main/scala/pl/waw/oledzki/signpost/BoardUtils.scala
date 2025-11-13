@@ -15,36 +15,39 @@ object BoardUtils {
     }
   }
 
-  def findAcceptingCellsIndicatedByArrow(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
-    val cell = board.cells.get((x, y))
+  private def findAllPotentialConnections(board: Board): List[((Int, Int), (Int, Int))] = {
+    val maxVisitingNumber = board.size * board.size
 
-    cell match {
-      case None => List.empty
-      case Some(c) =>
-        val (dx, dy) = directionToVector(c.arrow)
+    board.cells.map { case ((x, y), cell) =>
+      val (dx, dy) = directionToVector(cell.arrow)
 
-        // If no direction (START/STOP), return empty list
-        if (dx == 0 && dy == 0) {
-          List.empty
-        } else {
-          // Generate all cells in that direction, excluding the current one
-          val cellsInDirection = LazyList.from(1).map { step =>
-            val newX = x + dx * step
-            val newY = y + dy * step
-            ((newX, newY), board.cells.get((newX, newY)))
-          }.takeWhile { case ((newX, newY), _) =>
-            // Stop when we go out of bounds
-            newX >= 0 && newX < board.size && newY >= 0 && newY < board.size
-          }.collect {
-            // Only keep cells that exist in the board
-            case (coords, Some(cell)) => (coords, cell)
-          }.toList
+      if (cell.visitingNumber.contains(maxVisitingNumber)) {
+        List.empty
+      } else {
+        LazyList.from(1).map { step =>
+          val newX = x + dx * step
+          val newY = y + dy * step
+          ((x, y), (newX, newY), board.cells.get((newX, newY)))
+        }.takeWhile { case (_, (newX, newY), _) =>
+          newX >= 0 && newX < board.size && newY >= 0 && newY < board.size
+        }.collect {
+          case (source, target, Some(targetCell)) if !targetCell.visitingNumber.contains(1) => (source, target)
+        }.toList
+      }
+    }.toList.flatten
+  }
 
-          cellsInDirection
-            .filter { case((x, y), cell) =>
-              ! board.connections.exists{connection => (x, y) == connection._2}
-            }
-        }
-    }
+  def findPotentialConnectionsFromCell(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
+    findAllPotentialConnections(board)
+      .filter { connection => connection._1 == (x, y) }
+      .filter { case (source, target) => ! board.connections.exists{connection => source == connection._1} }
+      .map { case (_, target) => (target, board.cells((target._1, target._2))) }
+  }
+
+  def findAllPotentialConnectionsToCell(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
+    findAllPotentialConnections(board)
+      .filter { connection => connection._2 == (x, y)}
+      .filter { case (source, target) => ! board.connections.exists{connection => target == connection._2} }
+      .map { case (source, _) => (source, board.cells((source._1, source._2))) }
   }
 }
