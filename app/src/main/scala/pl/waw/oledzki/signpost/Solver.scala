@@ -17,6 +17,7 @@ class Solver {
       new ConnectedCellsHaveConsecutiveNumber(),
       new OnlyOnePossibleOutgoingConnection(),
       new OnlyOnePossibleIncomingConnection(),
+      new CellsWithConsecutiveNumbersShouldBeConnected(),
     )
     Function.chain(rules.map(r => r.evaluate))(board)
   }
@@ -73,6 +74,24 @@ class OnlyOnePossibleIncomingConnection extends Rule {
         Some(board.copy(connections = board.connections + connection))
       } else {
         None
+      }
+    }.collectFirst{case Some(b) => b}.getOrElse(board)
+  }
+}
+
+class CellsWithConsecutiveNumbersShouldBeConnected extends Rule {
+  override def evaluate(board: Board): Board = {
+    val byVisitingNumbers: Map[Int, (Int, Int)] =
+      board.cells.collect {
+        case ((x, y), Cell(Some(visitingNumber), _)) =>
+          visitingNumber -> (x,y)
+      }
+    Range(1, board.size * board.size - 1).iterator.map{ n =>
+      (byVisitingNumbers.get(n), byVisitingNumbers.get(n+1)) match {
+        case (Some(cell1), Some(cell2)) if !board.connections.contains((cell1, cell2)) =>
+            val connection = (cell1, cell2)
+            Some(board.copy(connections = board.connections + connection))
+        case _ => None
       }
     }.collectFirst{case Some(b) => b}.getOrElse(board)
   }
