@@ -24,14 +24,25 @@ object BoardUtils {
       if (cell.visitingNumber.contains(maxVisitingNumber)) {
         List.empty
       } else {
-        LazyList.from(1).map { step =>
+        val withinBoard = LazyList.from(1).map { step =>
           val newX = x + dx * step
           val newY = y + dy * step
           ((x, y), (newX, newY), board.cells.get((newX, newY)))
         }.takeWhile { case (_, (newX, newY), _) =>
           newX >= 0 && newX < board.size && newY >= 0 && newY < board.size
-        }.collect {
-          case (source, target, Some(targetCell)) if !targetCell.visitingNumber.contains(1) => (source, target)
+        }
+        val notViolatingVisitingNumbers = cell.visitingNumber match {
+          case Some(thisVisitingNumber) =>
+            withinBoard
+              .filter{
+                case (_, _, Some(Cell(Some(newVisitingNumber), _))) if newVisitingNumber < thisVisitingNumber => false
+                case _ => true
+              }
+          case _ =>
+            withinBoard
+        }
+        notViolatingVisitingNumbers.collect {
+           case (source, target, Some(targetCell)) if !targetCell.visitingNumber.contains(1) => (source, target)
         }.toList
       }
     }.toList.flatten
