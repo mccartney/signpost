@@ -41,12 +41,14 @@ object BoardUtils {
     findAllPotentialConnections(board)
       .filter { connection => connection._1 == (x, y) }
       .filter { case (source, target) => ! board.connections.exists{connection => source == connection._1} }
+      .filter { case (source, target) => ! board.connections.exists{connection => target == connection._2} }
       .map { case (_, target) => (target, board.cells((target._1, target._2))) }
   }
 
   def findAllPotentialConnectionsToCell(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
     findAllPotentialConnections(board)
       .filter { connection => connection._2 == (x, y)}
+      .filter { case (source, target) => ! board.connections.exists{connection => source == connection._1} }
       .filter { case (source, target) => ! board.connections.exists{connection => target == connection._2} }
       .map { case (source, _) => (source, board.cells((source._1, source._2))) }
   }

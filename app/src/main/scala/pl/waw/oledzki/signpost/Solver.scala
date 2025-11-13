@@ -50,8 +50,6 @@ class OnlyOnePossibleOutgoingConnection extends Rule {
     board.cells.iterator.map{ case (coord: (Int, Int), cell: Cell) =>
       val (x, y) = coord
       val potentialTargets = BoardUtils.findPotentialConnectionsFromCell(board, x, y)
-      if (potentialTargets.nonEmpty) {
-      }
       if (potentialTargets.size == 1) {
         val target = potentialTargets.head
         val connection = ((x, y), target._1)
