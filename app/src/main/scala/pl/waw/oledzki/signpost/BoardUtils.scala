@@ -30,6 +30,10 @@ object BoardUtils {
           ((x, y), (newX, newY), board.cells.get((newX, newY)))
         }.takeWhile { case (_, (newX, newY), _) =>
           newX >= 0 && newX < board.size && newY >= 0 && newY < board.size
+        }.filterNot { case (_, (newX, newY), _) =>
+          board.connections.contains((x, y), (newX, newY))
+        }.filterNot { case (_, newTarget, _) =>
+          board.connections.exists((source, target) => target == newTarget || source == (x,y))
         }
         val notViolatingVisitingNumbers = cell.visitingNumber match {
           case Some(thisVisitingNumber) =>
@@ -51,16 +55,12 @@ object BoardUtils {
   def findPotentialConnectionsFromCell(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
     findAllPotentialConnections(board)
       .filter { connection => connection._1 == (x, y) }
-      .filter { case (source, target) => ! board.connections.exists{connection => source == connection._1} }
-      .filter { case (source, target) => ! board.connections.exists{connection => target == connection._2} }
-      .map { case (_, target) => (target, board.cells((target._1, target._2))) }
+      .map { case (_, target) => (target, board.cells(target)) }
   }
 
   def findAllPotentialConnectionsToCell(board: Board, x: Int, y: Int): List[((Int, Int), Cell)] = {
     findAllPotentialConnections(board)
       .filter { connection => connection._2 == (x, y)}
-      .filter { case (source, target) => ! board.connections.exists{connection => source == connection._1} }
-      .filter { case (source, target) => ! board.connections.exists{connection => target == connection._2} }
-      .map { case (source, _) => (source, board.cells((source._1, source._2))) }
+      .map { case (source, _) => (source, board.cells(source)) }
   }
 }
