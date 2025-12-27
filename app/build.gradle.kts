@@ -30,5 +30,5 @@ tasks.named<Test>("test") {
 }
 
 application {
-    mainClass = "org.example.App"
+    mainClass = "pl.waw.oledzki.signpost.App"
 }
