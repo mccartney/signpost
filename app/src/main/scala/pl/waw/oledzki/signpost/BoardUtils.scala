@@ -41,7 +41,8 @@ object BoardUtils {
           case Some(thisVisitingNumber) =>
             withinBoard
               .filter{
-                case (_, _, Some(Cell(Some(newVisitingNumber), _))) if newVisitingNumber < thisVisitingNumber => false
+                case (_, _, Some(Cell(Some(targetVisitingNumber), _))) =>
+                  targetVisitingNumber == thisVisitingNumber + 1
                 case _ => true
               }
           case _ =>
