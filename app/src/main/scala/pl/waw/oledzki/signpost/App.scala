@@ -6,7 +6,7 @@ object App {
   def main(args: Array[String]): Unit = {
     val board = exampleBoard
     val solvedBoard = new Solver().solve(exampleBoard)
-    System.out.println(solvedBoard.connections)
+    System.out.println(s"${solvedBoard.connections.size} connections: ${solvedBoard.connections}")
     val renderer = Renderer()
     val html = renderer.boardToHtml(solvedBoard)
     Files.writeString(Paths.get("board.html"), html)

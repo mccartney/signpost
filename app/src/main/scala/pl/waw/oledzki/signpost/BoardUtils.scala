@@ -34,6 +34,8 @@ object BoardUtils {
           board.connections.contains((x, y), (newX, newY))
         }.filterNot { case (_, newTarget, _) =>
           board.connections.exists((source, target) => target == newTarget || source == (x,y))
+        }.filterNot { case ((x, y), newTarget, _) =>
+          hasIndirectConnection(board, newTarget, (x, y))
         }
         val notViolatingVisitingNumbers = cell.visitingNumber match {
           case Some(thisVisitingNumber) =>
@@ -63,4 +65,20 @@ object BoardUtils {
       .filter { connection => connection._2 == (x, y)}
       .map { case (source, _) => (source, board.cells(source)) }
   }
+
+  private def hasIndirectConnection(board: Board, from: (Int, Int), to: (Int, Int)): Boolean = {
+    @annotation.tailrec
+    def follow(current: (Int, Int), visited: Set[(Int, Int)]): Boolean = {
+      if (current == to) true
+      else if (visited.contains(current)) false
+      else {
+        board.connections.find(_._1 == current) match {
+          case Some((_, next)) => follow(next, visited + current)
+          case None => false
+        }
+      }
+    }
+    follow(from, Set.empty)
+  }
+
 }
