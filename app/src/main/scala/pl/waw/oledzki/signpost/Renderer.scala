@@ -33,7 +33,7 @@ class Renderer(cellSize: Int = 80) {
     val cy = y * cellSize + cellSize / 2
 
     val fillColor = cell.visitingNumber match {
-      case Some(_) => "#e0e0e0"
+      case Some(_) => "#c0c0c0"
       case None => "white"
     }
     val rect = s"""<rect x="${x * cellSize}" y="${y * cellSize}" width="$cellSize" height="$cellSize" fill="$fillColor" stroke="#333" stroke-width="2"/>"""
